@@ -67,18 +67,20 @@
             e.preventDefault();
 
             var filterText = "&fq=" + inputSearch.val();
+            var filterStart = "";
+            var filterEnd = "";
             if (inputStart.val() != "") {
-                var filterStart = "&begin_date=" + inputStart.val() + "0101";
+                filterStart = "&begin_date=" + inputStart.val() + "0101";
             }
             if (inputEnd.val() != "") {
-                var filterEnd = "&end_date=" + inputEnd.val() + "1231";
+                filterEnd = "&end_date=" + inputEnd.val() + "1231";
             }
 
             var filters = filterText + filterStart + filterEnd;
 
             var pageCount = Math.ceil(inputNumber.val() / 10);
             console.log(filters);
-
+            console.log("page count: " + pageCount);
             var allDocuments = [];
             function crazyStuff() {
                 if (pageCount > 0) {
@@ -86,18 +88,16 @@
                         url: queryURL + filters + "&page=" + pageCount-- + apiKey,
                         method: "GET"
                     }).then(function (data) {
-                        console.log(data);
-                        allDocuments = allDocuments.concat(data.docs);
+                        // console.log("what?");
+                        console.log(data.response.docs);
+                        allDocuments = allDocuments.concat(data.response.docs);
+                        // console.log(allDocuments);
                         crazyStuff();
                     });
                 }
-                console.log(allDocuments);
             }
             crazyStuff();
-
-
-
-
+            // console.log(allDocuments);
         });
     </script>
 </body>
