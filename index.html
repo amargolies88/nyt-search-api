@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="row header">
+            <h1>New York Times Search</h1>
+        </div>
+        <div class="row main">
+            <h3>Search Parameters</h3>
+            <div class="col-12">
+                <form>
+                    Search Term:</br>
+                    <input id="input-search" class="filter" label="Search Term:" type="text" /></br>
+                    Number of Records to Retrieve:</br>
+                    <input id="input-record-count" class="filter" label="Number of Records to Retrieve:"
+                        type="number" /></br>
+                    Start Year (Optional):</br>
+                    <input id="input-start-year" class="filter" label="Start Year (Optional):" type="number" /></br>
+                    End Year (Optional):</br>
+                    <input id="input-end-year" class="filter" label="End Year (Optional):" type="number" /></br>
+                    <button id="search-btn">Search</button>
+                    <button id="clear-btn">Clear Results</button>
+                </form>
+            </div>
+
+            <div class="row article-row">
+
+            </div>
+
+        </div>
+        <div class="footer fixed-bottom text-center">
+            <span id="footer-text">Made with lots of love</span>
+        </div>
+
+    </div>
+
+
+    <script>
+        var container = $(".container");
+        var formRow = $(".main");
+        var articleRow = $(".article-row");
+
+        var inputSearch = $("#input-search");
+        var inputNumber = $("#input-record-count");
+        var inputStart = $("#input-start-year");
+        var inputEnd = $("#input-end-year");
+
+        var searchBtn = $("#search-btn");
+        var clearBtn = $("#clear-btn");
+
+        var queryURL = "https://api.nytimes.com/svc/search/v2/articlesearch.json?";
+        var apiKey = "&api-key=YyT9NzdanwpuQhmzWHMAXUKiCx2MOKlo";
+        searchBtn.click(function (e) {
+            e.preventDefault();
+
+            var filterText = "&fq=" + inputSearch.val();
+            if (inputStart.val() != "") {
+                var filterStart = "&begin_date=" + inputStart.val() + "0101";
+            }
+            if (inputEnd.val() != "") {
+                var filterEnd = "&end_date=" + inputEnd.val() + "1231";
+            }
+
+            var filters = filterText + filterStart + filterEnd;
+
+            var pageCount = Math.ceil(inputNumber.val() / 10);
+            console.log(filters);
+
+            var allDocuments = [];
+            function crazyStuff() {
+                if (pageCount > 0) {
+                    $.ajax({
+                        url: queryURL + filters + "&page=" + pageCount-- + apiKey,
+                        method: "GET"
+                    }).then(function (data) {
+                        console.log(data);
+                        allDocuments = allDocuments.concat(data.docs);
+                        crazyStuff();
+                    });
+                }
+                console.log(allDocuments);
+            }
+            crazyStuff();
+
+
+
+
+        });
+    </script>
+</body>
+
+</html>
